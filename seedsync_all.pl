@@ -9,9 +9,10 @@
     use Math::Combinatorics;
     use Parallel::ForkManager;
 	use List::MoreUtils qw(uniq);
-	use Statistics::Descriptive;
+	#use Statistics::Descriptive;
+	use Time::HiRes qw(gettimeofday tv_interval); #get better than 1 second resolution
     
-    $MAX_PROCESSES=16; #probably don't want this to be greater than the # of cores you have.
+    $MAX_PROCESSES=1; #probably don't want this to be greater than the # of cores you have.
     
     #generate array of all possible miRNA seed combinations
     print "opening miRNA FASTA file...";
@@ -76,12 +77,16 @@
     open(OUTFILE, ">seedpairs_numhits.test.txt");
     print OUTFILE "Motif 1\tMotif 2\tCount\n";
     
-    for $i (0 .. $#combinations){
-        
+    #for $i (0 .. $#combinations){
+     $tloop0 = [gettimeofday];
+	 for $i (0 .. 100){   
         # Forks and returns the pid for the child:
         
         $pm->start and next; # do the fork
         
+		#Time each loop.
+		$t0 = [gettimeofday];
+		
         $motif1 = $combinations[$i][0];
         $motif2 = $combinations[$i][1];
     
@@ -98,15 +103,21 @@
         }
 
         #list stats
-
-        print "$count\n";
+		$t1 = [gettimeofday];
+        print "$count\t";
+		print tv_interval($t0,$t1);
+		print "\n";
         print OUTFILE "$motif1\t$motif2\t$count\n";
 
         $pm->finish; # Terminates the child process
         }
     $pm->wait_all_children;
-
-    
+	
+	$tloop1 = [gettimeofday];
+	$looptime = tv_interval($tloop0,$tloop1);
+    print "Total Loop time: $looptime\n";
+	
+	
     close OUTFILE;
     print "\nDone!\n";
 }
