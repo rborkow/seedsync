@@ -7,6 +7,9 @@ import re
 import json
 import itertools
 import time
+import logging
+
+logging.basicConfig(filename='run.log',level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%I:%M:%S.%f %p')
 
 utr_strings = {}
 hits = []
@@ -18,8 +21,7 @@ def findPairs(seed_pair):
             hits.append(SeedSyncHit(seed_pair, k))
     end = time.time()
     delta = end-start
-    print delta
-
+    logging.info('Seedpair %s | %s done. Time elapsed: %f', seed_pair[0], seed_pair[1], delta)
 
 class UTR(object):
     substrings_dict = {}
