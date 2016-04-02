@@ -108,3 +108,6 @@ if __name__ == '__main__':
     pool.map(findPairs, Seed.seed_pairs)
     pool.close()
     pool.join()
+
+    print "Number of co-occurrences: %d" % len(hits)
+    json.dump(hits, open("cooccurrence_hits.json",'w'))
