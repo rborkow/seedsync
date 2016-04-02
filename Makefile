@@ -4,9 +4,11 @@ ifdef VIRTUAL_ENV
 	@exit
 else
 	@virtualenv venv
-	@pip install --upgrade pip
-	@pip install -r requirements.txt
 endif
 
+pip:
+	@pip install --upgrade pip
+	@pip install -r requirements.txt
+	
 clean:
 	@virtualenv --clear venv

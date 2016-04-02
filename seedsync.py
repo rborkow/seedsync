@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 
 from Bio import SeqIO
+from multiprocessing import Pool
 
 import re
 import json
 import itertools
 import time
+
+utr_strings = {}
+hits = []
+
+def findPairs(seed_pair):
+    start = time.time()
+    for k, v in utr_strings.iteritems():
+        if seed_pair[0] in v and seed_pair[1] in v:
+            hits.append(SeedSyncHit(seed_pair, k))
+    end = time.time()
+    delta = end-start
+    print delta
+
 
 class UTR(object):
     substrings_dict = {}
@@ -66,19 +80,17 @@ class SeedSyncHit(object):
 class SeedSync(object):
     hits = []
 
-    def __init__(self, seedObject, utrObject):
-        self.Seed = seedObject
+    def __init__(self, utrObject):
         self.UTR = utrObject
 
-    def findPairs(self):
+    def findPairs(self, seedpair):
         count = 0
         start = time.time()
-        for pair in Seed.seed_pairs:
-            for k, v in UTR.substrings_dict.iteritems():
-                if pair[0] in v and pair[1] in v:
-                    self.hits.append(SeedSyncHit(pair, k))
-            count = count + 1
-            print count, time.time()
+        for k, v in UTR.substrings_dict.iteritems():
+            if seedpair[0] in v and seedpair[1] in v:
+                self.hits.append(SeedSyncHit(pair, k))
+        count = count + 1
+        print count, time.time()
         end = time.time()
         print (end - start)
         print "Number of co-occurrences: %d" % len(self.hits)
@@ -86,7 +98,13 @@ class SeedSync(object):
 if __name__ == '__main__':
     UTR = UTR()
     Seed = Seeds()
+
     UTR.parse()
+    utr_strings = UTR.substrings_dict
+
     Seed.parse()
-    ss = SeedSync(Seed, UTR)
-    ss.findPairs()
+
+    pool = Pool()
+    pool.map(findPairs, Seed.seed_pairs)
+    pool.close()
+    pool.join()
