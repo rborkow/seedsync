@@ -77,24 +77,6 @@ class SeedSyncHit(object):
         self.seedpair = seedpair
         self.utr = utr
 
-class SeedSync(object):
-    hits = []
-
-    def __init__(self, utrObject):
-        self.UTR = utrObject
-
-    def findPairs(self, seedpair):
-        count = 0
-        start = time.time()
-        for k, v in UTR.substrings_dict.iteritems():
-            if seedpair[0] in v and seedpair[1] in v:
-                self.hits.append(SeedSyncHit(pair, k))
-        count = count + 1
-        print count, time.time()
-        end = time.time()
-        print (end - start)
-        print "Number of co-occurrences: %d" % len(self.hits)
-
 if __name__ == '__main__':
     UTR = UTR()
     Seed = Seeds()
