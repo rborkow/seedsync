@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from progressbar import ProgressBar, Bar, Percentage, ETA
 from multiprocessing import Pool
 
 import json
@@ -18,13 +17,8 @@ def findPairs(utrfile):
     utr = loadUTR(utrfile)
 
     hits = []
-
-    widgets = [Percentage(),
-               ' ', Bar(),
-               ' ', ETA()]
-    pbar = ProgressBar(widgets = widgets)
-
-    for seed_pair in pbar(seedpairs):
+    print utrfile
+    for seed_pair in seedpairs:
         if seed_pair[0] in utr and seed_pair[1] in utr:
             hits.append(seed_pair)
     json.dump(hits, open("hits/%s.json" % utrfile,'w'))
@@ -52,8 +46,3 @@ if __name__ == '__main__':
     pool.map(findPairs, utrfiles)
     pool.close()
     pool.join()
-
-    #for utrfile in os.listdir('utr'):
-    #    utr = set(json.load(open("utr/%s" % utrfile, 'r')))
-    #    hits = findPairs(utr)
-    #    json.dump(hits, open("hits/%s.json" % utrfile,'w'))
