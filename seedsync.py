@@ -36,6 +36,7 @@ class UTR(object):
         input_seq_iterator = SeqIO.parse(open("3p_hsa_utr_hg19", "rU"), "fasta")
         for record in input_seq_iterator:
             substrings[record.name] = list(self.window(str(record.seq), 6))
+            json.dump(substrings[record.name], open("utr/%s" % record.name, 'w'))
         self.substrings_dict = substrings
 
     def json_dump(self):
@@ -70,9 +71,9 @@ class Seeds(object):
         print "Number of pairs : %d" % len(self.seed_pairs)
 
 
-    def json_dump(object):
-        json.dump(seed_map, open("hsa_mirna_seed_map.json",'w'))
-        json.dump(seed_pairs, open("hsa_mirna_seed_pairs.json",'w'))
+    def json_dump(self):
+        json.dump(self.seed_map, open("mirna/hsa_mirna_seed_map.json",'w'))
+        json.dump(self.seed_pairs, open("mirna/hsa_mirna_seed_pairs.json",'w'))
 
 class SeedSyncHit(object):
     def __init__(self, seedpair, utr):
@@ -83,15 +84,18 @@ if __name__ == '__main__':
     UTR = UTR()
     Seed = Seeds()
 
-    UTR.parse()
-    utr_strings = UTR.substrings_dict
+    #UTR.parse()
+    #utr_strings = UTR.substrings_dict
+
 
     Seed.parse()
+    Seed.json_dump()
 
-    pool = Pool()
-    pool.map(findPairs, Seed.seed_pairs)
-    pool.close()
-    pool.join()
 
-    print "Number of co-occurrences: %d" % len(hits)
-    json.dump(hits, open("cooccurrence_hits.json",'w'))
+    #pool = Pool()
+    #pool.map(findPairs, Seed.seed_pairs)
+    #pool.close()
+    #pool.join()
+
+    #print "Number of co-occurrences: %d" % len(hits)
+    #json.dump(hits, open("cooccurrence_hits.json",'w'))
